@@ -1,0 +1,44 @@
+{
+    "compilerOptions": {
+        "baseUrl": "src",
+        "paths": {
+            "@Framework/*": ["framework/*"],
+            "@Plugins/*": ["framework/plugins/*"],
+        },
+        "typeRoots": ["./node_modules/@types", "./node_modules/@citizenfx/client", "./node_modules/@citizenfx/server"],
+        "removeComments": true,
+        "noUnusedLocals": false,
+        "noUnusedParameters": false,
+        "noImplicitReturns": true,
+        "allowJs": true,
+        "resolveJsonModule": true,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "moduleResolution": "Bundler",
+        "allowSyntheticDefaultImports": true,
+        "composite": false,
+        "forceConsistentCasingInFileNames": true,
+        "strict": false,
+        "module": "ESNext",
+        "target": "ES2022",
+        "outDir": "hades-cache",
+        "skipLibCheck": true,
+        "esModuleInterop": true,
+        "declaration": true,
+        "emitDeclarationOnly": true,
+        "outFile": "typedefs.ts"
+    },
+    "include": [
+        "src/**/*.ts",
+        "src-ui/**/*.ts",
+        "src-ui/**/*.d.ts",
+        "src/**/*.ts",
+        "src/**/*.d.ts",
+        "src/**/*.tsx",
+        "src/**/*.vue",
+        "src/**/ui/**.ts",
+        "src/**/ui/**.svelte",
+        "src/**/components/**.svelte"
+    ],
+    "exclude": ["scripts", "hades-cache", "cache"]
+}

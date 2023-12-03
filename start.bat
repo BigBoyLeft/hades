@@ -1,0 +1,1 @@
+artifacts\FXServer.exe +exec "./server/server.cfg"
