@@ -1,1 +1,1 @@
-artifacts\FXServer.exe +exec "./server/server.cfg"
+artifacts\FXServer.exe +exec "environment.config.cfg"

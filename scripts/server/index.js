@@ -1,11 +1,9 @@
 import path from 'node:path';
 import { ChildProcess, spawn } from 'child_process';
 import fkill from 'fkill';
-import { BundleResources, Doctor } from '../bundler/index.js';
-import { configure } from './config.js';
+import { BundleServer, Doctor } from '../bundler/index.js';
 import { createExecTime } from '../lib/index.js';
 
-const PORTS = [30120, 40120];
 /**
  * @type {ChildProcess} */
 let serverProcess;
@@ -34,9 +32,8 @@ function startServer(mode) {
     const isDev = mode === 'dev';
     const serverTimer = createExecTime('>>> Server Startup');
 
-    BundleResources(mode);
-    configure(mode);
-    // handleServerProcess(!isDev);
+    BundleServer(mode);
+    handleServerProcess(!isDev);
 }
 
 export { startServer };

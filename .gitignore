@@ -1,4 +1,7 @@
 artifacts
 node_modules
 cache
-server/resources/framework
+resources/[compiled]
+environment.config.cfg
+.replxx_history
+pnpm-lock.yaml

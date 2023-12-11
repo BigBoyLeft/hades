@@ -56,6 +56,9 @@ async function globAsync(path, options = {}) {
  * @return {string[]}
  */
 function getAllModules() {
+    if (!fs.existsSync(MODULE_FOLDER)) {
+        throw new Error(`Modules: ${MODULE_FOLDER}`);
+    }
     return fs.readdirSync(MODULE_FOLDER);
 }
 

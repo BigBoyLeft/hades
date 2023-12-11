@@ -37,8 +37,8 @@
         "src/**/*.tsx",
         "src/**/*.vue",
         "src/**/ui/**.ts",
-        "src/**/ui/**.svelte",
-        "src/**/components/**.svelte"
+        "src/**/ui/**.vue",
+        "src/**/components/**.vue"
     ],
     "exclude": ["scripts", "hades-cache", "cache"]
 }

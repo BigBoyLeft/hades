@@ -1,5 +1,9 @@
-async function compileUI() {}
+async function compileUI() {
+    console.log('>>> Compiled UI');
+}
 
-async function createViteServer() {}
+async function createViteServer() {
+    console.log('>>> Started Vite Server');
+}
 
 export { compileUI, createViteServer };

@@ -6,12 +6,14 @@
     "type": "module",
     "scripts": {
         "production": "node ./scripts/runner.js --update --start",
-        "dev": "node ./scripts/runner.js --start --dev",
+        "dev": "node ./scripts/runner.js --update --start --dev",
         "update": "node ./scripts/runner.js --update",
         "docs": "node ./scripts/runner.js --docs"
     },
     "dependencies": {
-        "axios": "^1.6.2"
+        "@vitejs/plugin-vue": "^4.5.2",
+        "axios": "^1.6.2",
+        "font-list": "^1.5.1"
     },
     "devDependencies": {
         "@citizenfx/client": "2.0.7114-1",
@@ -23,7 +25,10 @@
         "fkill": "^8.1.1",
         "glob": "^10.3.10",
         "node-stream-zip": "^1.15.0",
-        "prettier": "^3.1.0"
+        "prettier": "^3.1.0",
+        "typescript": "^5.3.3",
+        "vite": "^5.0.7",
+        "vue": "^3.3.11"
     },
     "prettier": {
         "tabWidth": 4,

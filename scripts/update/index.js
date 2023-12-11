@@ -2,13 +2,20 @@ import fs from 'node:fs';
 import path from 'node:path';
 import axios from 'axios';
 import StreamZip from 'node-stream-zip';
+import { getEnvironmentConfig } from '../bundler/config.js';
 
 const artifactsUrl = 'https://changelogs-live.fivem.net/api/changelog/versions/win32/server';
 export const artifactsPath = path.join(process.cwd(), 'artifacts');
-const branch = 'latest'; // 'recommended, latest
 
-async function updateArtifacts() {
+async function updateArtifacts(mode) {
     try {
+        if (!fs.existsSync(artifactsPath)) {
+            console.log(`Artifacts directory does not exist. Creating directory...`);
+            fs.mkdirSync(artifactsPath);
+        }
+
+        const environment = await getEnvironmentConfig(mode)
+        const branch = environment.server.artifacts_branch;
         const { data } = await axios.get(artifactsUrl);
         const downloadUrl = data[branch + '_download'];
         const buildVersion = data[branch];
