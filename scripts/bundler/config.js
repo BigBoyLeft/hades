@@ -4,9 +4,9 @@ import { writeFile } from '../lib/file.js';
 
 const ENVIRONMENT_CONFIG = path.join(process.cwd(), `environment.config.cfg`);
 
-async function getEnvironmentConfig(mode) {
+async function getEnvironmentConfig() {
     try {
-        const configPath = path.join(process.cwd(), `configs/${mode}.json`);
+        const configPath = path.join(process.cwd(), `configs/${process.env.ENVIRONMENT}.json`);
         const configData = await fs.promises.readFile(configPath, 'utf8');
         return JSON.parse(configData);
     } catch (error) {
@@ -14,15 +14,15 @@ async function getEnvironmentConfig(mode) {
     }
 }
 
-async function configure(mode) {
+async function configure() {
     try {
         if (fs.existsSync(ENVIRONMENT_CONFIG)) {
             fs.rmSync(ENVIRONMENT_CONFIG);
         }
 
-        const config = await getEnvironmentConfig(mode);
+        const config = await getEnvironmentConfig();
         const { server, additional_options, security } = config;
-        let server_cfg = `# THIS IS A GENERATED ${mode.toUpperCase()} ENVIRONMENT CONFIG. DO NOT EDIT \n`;
+        let server_cfg = `# THIS IS A GENERATED ${process.env.ENVIRONMENT.toUpperCase()} ENVIRONMENT CONFIG. DO NOT EDIT \n`;
         server_cfg += `endpoint_add_tcp "0.0.0.0:30120"\n`;
         server_cfg += `endpoint_add_udp "0.0.0.0:30120"\n`;
         server_cfg += `ensure [fivem]\n`;

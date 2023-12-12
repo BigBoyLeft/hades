@@ -5,23 +5,22 @@
     "author": "Left",
     "type": "module",
     "scripts": {
-        "production": "node ./scripts/runner.js --update --start",
-        "dev": "node ./scripts/runner.js --update --start --dev",
+        "start": "cross-env ENVIRONMENT=prod node ./scripts/runner.js --update --start",
+        "dev": "cross-env ENVIRONMENT=dev node ./scripts/runner.js --start --dev",
         "update": "node ./scripts/runner.js --update",
         "docs": "node ./scripts/runner.js --docs"
     },
     "dependencies": {
         "@vitejs/plugin-vue": "^4.5.2",
-        "axios": "^1.6.2",
-        "font-list": "^1.5.1"
+        "axios": "^1.6.2"
     },
     "devDependencies": {
         "@citizenfx/client": "2.0.7114-1",
         "@citizenfx/server": "2.0.7114-1",
-        "@swc/cli": "^0.1.63",
-        "@swc/core": "^1.3.96",
         "@types/decompress": "^4.2.7",
         "@types/node": "^20.9.2",
+        "cross-env": "^7.0.3",
+        "esbuild": "0.19.9",
         "fkill": "^8.1.1",
         "glob": "^10.3.10",
         "node-stream-zip": "^1.15.0",

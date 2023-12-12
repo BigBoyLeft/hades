@@ -7,14 +7,14 @@ import { getEnvironmentConfig } from '../bundler/config.js';
 const artifactsUrl = 'https://changelogs-live.fivem.net/api/changelog/versions/win32/server';
 export const artifactsPath = path.join(process.cwd(), 'artifacts');
 
-async function updateArtifacts(mode) {
+async function updateArtifacts() {
     try {
         if (!fs.existsSync(artifactsPath)) {
             console.log(`Artifacts directory does not exist. Creating directory...`);
             fs.mkdirSync(artifactsPath);
         }
 
-        const environment = await getEnvironmentConfig(mode)
+        const environment = await getEnvironmentConfig()
         const branch = environment.server.artifacts_branch;
         const { data } = await axios.get(artifactsUrl);
         const downloadUrl = data[branch + '_download'];

@@ -1,3 +1,3 @@
-import { format } from './lib';
+import { format } from '@Framework/server/lib';
 
-console.log(format('Hello', 'World'));
+console.log(format('Hello', GetCurrentResourceName()));

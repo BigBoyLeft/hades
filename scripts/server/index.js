@@ -28,12 +28,11 @@ async function handleServerProcess(autoRestart = false) {
     });
 }
 
-function startServer(mode) {
-    const isDev = mode === 'dev';
+function startServer() {
     const serverTimer = createExecTime('>>> Server Startup');
 
-    BundleServer(mode);
-    handleServerProcess(!isDev);
+    BundleServer();
+    handleServerProcess(process.env.ENVIRONMENT !== "dev");
 }
 
 export { startServer };

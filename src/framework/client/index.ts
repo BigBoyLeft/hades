@@ -1,3 +1,3 @@
 import { format } from './lib';
 
-console.log(format('Hello', 'World'));
+console.log(format('Hellasdo', 'World'));

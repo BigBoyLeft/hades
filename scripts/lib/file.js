@@ -2,8 +2,6 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { glob } from 'glob';
 
-const MODULE_FOLDER = 'src/framework/modules';
-
 /**
  * @param {string} path
  * @return {string}
@@ -50,16 +48,6 @@ async function globAsync(path, options = {}) {
     return results.map((filePath) => {
         return sanitizePath(filePath);
     });
-}
-
-/**
- * @return {string[]}
- */
-function getAllModules() {
-    if (!fs.existsSync(MODULE_FOLDER)) {
-        throw new Error(`Modules: ${MODULE_FOLDER}`);
-    }
-    return fs.readdirSync(MODULE_FOLDER);
 }
 
 /**
@@ -126,4 +114,4 @@ async function copyAsync(path, destination) {
     await fs.promises.cp(path, destination, { force: true, recursive: true });
 }
 
-export { MODULE_FOLDER, globSync, globAsync, getFiles, getAllModules, copySync, copyAsync, writeFile, sanitizePath };
+export { globSync, globAsync, getFiles, copySync, copyAsync, writeFile, sanitizePath };
