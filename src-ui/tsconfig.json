@@ -1,0 +1,24 @@
+{
+    "extends": "../tsconfig.json",
+    "compilerOptions": {
+        "target": "ES5",
+        "module": "ESNext",
+        "jsx": "preserve",
+        "esModuleInterop": true,
+        "lib": ["ESNext", "DOM"]
+    },
+    "include": [
+        "src/**/*.ts",
+        "src/**/*.d.ts",
+        "src/**/*.tsx",
+        "src/**/*.vue",
+        "../src/**/modules/**/ui/**/*.ts",
+        "../src/**/modules/**/ui/**/*.vue"
+    ],
+    "exclude": [
+        "../src/**/server/**",
+        "../src/**/client/**",
+        "../src/**/modules/**/server",
+        "../src/**/modules/**/client"
+    ]
+}

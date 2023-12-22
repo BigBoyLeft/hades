@@ -2,8 +2,10 @@
     "compilerOptions": {
         "baseUrl": ".",
         "paths": {
-            "@Framework/*": ["./src/framework/*"],
-            "@Modules/*": ["./src/framework/modules/*"],
+            "@/*": ["./*"],
+            "utils/*": ["./src/utils/*"],
+            "framework/*": ["./src/framework/*"],
+            "modules/*": ["./src/framework/modules/*"]
         },
         "types": ["@types/node", "@citizenfx/client", "@citizenfx/server"],
         "removeComments": true,
@@ -30,15 +32,12 @@
     },
     "include": [
         "src/**/*.ts",
+        "src/**/*.d.ts",
         "src-ui/**/*.ts",
         "src-ui/**/*.d.ts",
-        "src/**/*.ts",
-        "src/**/*.d.ts",
-        "src/**/*.tsx",
-        "src/**/*.vue",
-        "src/**/ui/**.ts",
-        "src/**/ui/**.vue",
-        "src/**/components/**.vue"
+        "src-ui/**/*.vue",
+        "src/**/ui/**/*.ts",
+        "src/**/ui/**/*.vue"
     ],
     "exclude": ["scripts", "hades-cache", "cache"]
 }

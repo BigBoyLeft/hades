@@ -1,3 +1,1 @@
-import { format } from './lib';
-
-console.log(format('Hello', 'World'));
+console.log('This is a log from the client test module');
