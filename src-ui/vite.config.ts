@@ -1,13 +1,13 @@
 import { defineConfig } from 'vite';
 import path from 'node:path';
 import vue from '@vitejs/plugin-vue';
-import { RESOURCES_FOLDER } from '../scripts/compiler/resources';
+import { RESOURCES_FOLDER } from '../compiler/utils';
 
 export default defineConfig({
     plugins: [vue()],
-    base: './',
+    base: '/ui',
     build: {
-        outDir: path.join(process.cwd(), RESOURCES_FOLDER, 'framework', 'ui'),
+        outDir: path.join(RESOURCES_FOLDER, 'framework', 'ui'),
         emptyOutDir: true,
         minify: 'esbuild',
         reportCompressedSize: false,

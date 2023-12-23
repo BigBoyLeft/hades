@@ -1,12 +1,8 @@
 import path from 'node:path';
 import fs from 'node:fs';
 import { RESOURCES_FOLDER, sanitizePath, writeFile, globSync } from './utils.js';
+import { isPathDisabled } from './resources.js';
 
-/**
- * @param {string} resource
- * @param {string[]} modules
- * @returns
- */
 async function writeClientImports(resource, modules) {
     if (!modules.length) return '';
 
@@ -18,11 +14,6 @@ async function writeClientImports(resource, modules) {
     writeFile(importPath, content);
 }
 
-/**
- * @param {string} resource
- * @param {string[]} modules
- * @returns
- */
 async function writeServerImports(resource, modules) {
     if (!modules.length) return '';
 
@@ -37,8 +28,14 @@ async function writeServerImports(resource, modules) {
     writeFile(importPath, content);
 }
 
+function getModules(resource) {
+    return globSync(sanitizePath(path.join(resource, 'modules', '*'))).filter((module) => {
+        return !isPathDisabled(module);
+    });
+}
+
 async function buildModules(resource, dev) {
-    const modules = globSync(sanitizePath(path.join(resource, 'modules', '*')));
+    const modules = getModules(resource);
 
     await writeServerImports(resource, modules);
     await writeClientImports(resource, modules);
@@ -46,4 +43,4 @@ async function buildModules(resource, dev) {
     return;
 }
 
-export { buildModules };
+export { buildModules, getModules };

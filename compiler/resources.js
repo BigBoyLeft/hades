@@ -2,19 +2,15 @@ import path from 'node:path';
 import fs from 'node:fs';
 import esbuild from 'esbuild';
 import plugin from 'esbuild-plugin-fileloc';
+import ora from 'ora';
+
+const spinner = ora();
 
 import { RESOURCES_FOLDER, sanitizePath, globAsync, globSync, copySync } from './utils.js';
 import { buildModules } from './modules.js';
 
 const RESOURCE_DISABLERS = ['disabled', 'exclude'];
 
-/**
- * Compiles the client resource asynchronously.
- *
- * @param {type} resource - The resource to be compiled.
- * @param {boolean} dev - Flag indicating if the resource should be built in development mode.
- * @return {type} The compiled client resource.
- */
 async function compileServer(resource, dev) {
     const indexPath = sanitizePath(path.join(resource, 'server/index.ts'));
     const targetPath = sanitizePath(path.join(resource.replace('src', 'resources/[compiled]'), 'server/index.js'));
@@ -28,7 +24,7 @@ async function compileServer(resource, dev) {
         bundle: true,
         minify: true,
         sourcemap: false,
-        logLevel: 'info',
+        logLevel: 'warning',
         plugins: [plugin.filelocPlugin()],
     };
 
@@ -36,18 +32,10 @@ async function compileServer(resource, dev) {
         const ctx = await esbuild.context(esbuildOptions);
         await ctx.watch();
     } else {
-        const result = await esbuild.build(esbuildOptions);
-        console.log(await esbuild.analyzeMetafile(result));
+        await esbuild.build(esbuildOptions);
     }
 }
 
-/**
- * Compiles the client resource asynchronously.
- *
- * @param {type} resource - The resource to be compiled.
- * @param {boolean} dev - Flag indicating if the resource should be built in development mode.
- * @return {type} The compiled client resource.
- */
 async function compileClient(resource, dev) {
     const indexPath = sanitizePath(path.join(resource, 'client/index.ts'));
     const targetPath = sanitizePath(path.join(resource.replace('src', 'resources/[compiled]'), 'client/index.js'));
@@ -61,21 +49,19 @@ async function compileClient(resource, dev) {
         bundle: true,
         minify: true,
         sourcemap: false,
-        logLevel: 'info',
+        logLevel: 'warning',
     };
 
     if (dev) {
         const ctx = await esbuild.context(esbuildOptions);
         await ctx.watch();
     } else {
-        const result = await esbuild.build(esbuildOptions);
-        console.log(await esbuild.analyzeMetafile(result));
+        await esbuild.build(esbuildOptions);
     }
 }
 
-async function isResourceDisabled(resource) {
-    // check if the resource has a file named one of the disablers in the root folder
-    const files = await globAsync(path.join(resource, '*'));
+function isPathDisabled(folderPath) {
+    const files = globSync(path.join(folderPath, '*'), { nodir: true });
     const fileNames = files.map((file) => path.basename(file));
 
     for (const disabler of RESOURCE_DISABLERS) {
@@ -101,17 +87,8 @@ async function copyResourceFiles(resource) {
     }
 }
 
-/**
- * Builds a resource asynchronously.
- *
- * @param {any} resource - The path to the resource.
- * @param {boolean} dev - Flag indicating if the resource should be built in development mode.
- * @return {Promise} A promise that resolves when the resource is built.
- */
 async function buildResource(resource, dev) {
-    const isDisabled = await isResourceDisabled(resource);
-    if (isDisabled) return;
-
+    spinner.text = `Building resource ${path.basename(resource)}`;
     const hasServer = fs.existsSync(sanitizePath(path.join(resource, 'server')));
     const hasClient = fs.existsSync(sanitizePath(path.join(resource, 'client')));
     const hasModules = fs.existsSync(sanitizePath(path.join(resource, 'modules')));
@@ -127,17 +104,18 @@ async function buildResource(resource, dev) {
 }
 
 function getResources() {
-    return globSync(path.join(RESOURCES_FOLDER, '*'), { onlyDirectories: true });
+    return globSync(path.join(RESOURCES_FOLDER, '*'), { onlyDirectories: true }).filter((resource) => {
+        return !isPathDisabled(resource);
+    });
 }
 
-/**
- * Builds the resources asynchronously.
- *
- * @param {boolean} dev - Flag indicating if in development mode.
- * @return {Promise<void>} - A promise that resolves when the resources are built.
- */
 async function buildResources(dev) {
+    spinner.start('Compiling resources');
     const promises = [];
+
+    if (fs.existsSync(path.join(RESOURCES_FOLDER, '[compiled]'))) {
+        fs.rmSync(path.join(RESOURCES_FOLDER, '[compiled]'), { recursive: true });
+    }
 
     const resources = getResources();
 
@@ -146,6 +124,8 @@ async function buildResources(dev) {
     }
 
     await Promise.all(promises);
+
+    spinner.succeed('Built resources');
 }
 
-export { buildResources };
+export { buildResources, isPathDisabled, getResources };

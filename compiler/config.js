@@ -1,12 +1,17 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { getEnvironmentConfig, writeFile } from './utils.js';
+import ora from 'ora';
 
 const ENVIRONMENT_CONFIG = path.join(process.cwd(), `environment.config.cfg`);
 const ENVIRONMENT = process.env.ENVIRONMENT;
 
+const spinner = ora();
+
 async function configure() {
     try {
+        spinner.start('Generating environment config...');
+
         if (fs.existsSync(ENVIRONMENT_CONFIG)) {
             fs.rmSync(ENVIRONMENT_CONFIG);
         }
@@ -33,8 +38,11 @@ async function configure() {
         server_cfg += `sv_licenseKey "${server.license}"\n`;
 
         writeFile(ENVIRONMENT_CONFIG, server_cfg);
+
+        spinner.succeed('Built environment config');
     } catch (error) {
-        console.log(error);
+        spinner.fail('Failed to generate environment config!');
+        throw error;
     }
 }
 

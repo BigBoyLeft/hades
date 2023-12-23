@@ -1,23 +1,153 @@
+import path from 'node:path';
+import { exec, execSync, spawn } from 'node:child_process';
+import { sanitizePath, globSync, writeFile, copySync, RESOURCES_FOLDER, copyAsync } from './utils.js';
+import { getResources } from './resources.js';
+import { getModules } from './modules.js';
+import ora from 'ora';
+
+const spinner = ora();
+
+const UI_IMPORTS_FOLDER = path.join(process.cwd(), 'src-ui', 'src', 'imports');
+
+function getUIFiles(search_path) {
+    const files = {};
+    const resources = getResources();
+
+    for (const resource of resources) {
+        const modules = getModules(resource);
+
+        for (const module of modules) {
+            const uiFiles = globSync(sanitizePath(path.join(module, search_path)));
+
+            for (const file of uiFiles) {
+                const name = path.basename(file, '.vue');
+
+                files[name] = sanitizePath(file);
+            }
+        }
+    }
+
+    return files;
+}
+
+async function bundleUIPlugins() {
+    spinner.text = 'Bundling UI plugins...';
+    const files = getUIFiles('ui/plugins/*.ts');
+
+    let content = `// @ts-nocheck\n`;
+    content += `// THIS FILE IS AUTO GENERATED. DO NOT EDIT\n\n`;
+
+    content += Object.keys(files)
+        .map((name) => `import ${name} from '${files[name]}'`)
+        .join('\n');
+    content +=
+        `\n\nexport const VUE_PLUGIN_IMPORTS = [\n` +
+        Object.keys(files)
+            .map((name) => `${name}`)
+            .join(',\n') +
+        `\n]\n`;
+
+    const filePath = path.join(UI_IMPORTS_FOLDER, 'plugins.ts');
+    writeFile(filePath, content);
+}
+
+async function bundleUIModules() {
+    spinner.text = 'Bundling UI modules...';
+    const files = getUIFiles('ui/*.vue');
+
+    let content = `// @ts-nocheck\n`;
+    content += `// THIS FILE IS AUTO GENERATED. DO NOT EDIT\n\n`;
+    content += `import { shallowRef } from 'vue'\n\n`;
+
+    content += Object.keys(files)
+        .map((name) => `import ${name} from '${files[name]}'`)
+        .join('\n');
+    content +=
+        `\n\nexport const VUE_IMPORTS = {\n` +
+        Object.keys(files)
+            .map((name) => `${name}: shallowRef(${name})`)
+            .join(',\n') +
+        `\n}\n`;
+
+    const filePath = path.join(UI_IMPORTS_FOLDER, 'imports.ts');
+    writeFile(filePath, content);
+}
+
 async function bundleUI() {
-    console.log('bundled ui');
+    return new Promise(async (resolve, reject) => {
+        await bundleUIModules();
+        await bundleUIPlugins();
+
+        spinner.text = 'Building UI';
+
+        const vite = spawn('npx.cmd', ['vite', 'build', './src-ui'], {
+            stdio: 'pipe',
+        });
+
+        vite.once('close', (code) => {
+            resolve();
+        });
+
+        vite.on('error', (error) => {
+            reject(error);
+        });
+    });
 }
 
 async function createDevServer() {
-    console.log('created dev server');
+    return new Promise(async (resolve, reject) => {
+        await bundleUIModules();
+        await bundleUIPlugins();
+
+        spinner.text = 'Starting vite server';
+
+        const vite = spawn('npx.cmd', ['vite', './src-ui', '--clearScreen=false', '--host=localhost', '--port=3000'], {
+            stdio: 'pipe',
+        });
+
+        vite.stdout.on('data', (data) => {
+            if (data.toString().includes('ready')) {
+                spinner.succeed('Started vite server');
+                console.log(data.toString());
+                setTimeout(resolve, 1000);
+            } else console.log(data.toString());
+        });
+
+        vite.once('close', (code) => {
+            console.log(`vite exited with code ${code}`);
+        });
+
+        vite.on('error', (error) => {
+            reject(error);
+        });
+    });
 }
 
-/**
- * Builds the UI asynchronously.
- *
- * @param {boolean} dev - Flag indicating if in development mode.
- * @return {Promise<void>} A promise that resolves when the UI is built.
- */
+async function buildDevServerConnector() {
+    spinner.text = 'Building dev server connector';
+    const src = path.join(process.cwd(), 'src-ui', 'dev', 'index.html');
+    const dest = path.join(RESOURCES_FOLDER, 'framework', 'ui', 'index.html');
+    await copyAsync(src, dest);
+}
+
 async function buildUI(dev) {
-    if (dev) {
-        await createDevServer();
-    } else {
-        await bundleUI();
+    spinner.start('Bundling UI components');
+    try {
+        await bundleUIModules();
+        await bundleUIPlugins();
+
+        if (dev) {
+            await createDevServer();
+            await buildDevServerConnector();
+        } else {
+            await bundleUI();
+        }
+    } catch (error) {
+        spinner.fail('Failed to build UI');
+        throw error;
     }
+
+    spinner.succeed('Built UI');
 }
 
-export { buildUI };
+export { buildUI, bundleUIModules, bundleUIPlugins };

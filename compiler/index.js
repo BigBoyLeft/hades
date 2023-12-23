@@ -9,8 +9,8 @@ const isDev = process.env.ENVIRONMENT !== 'prod';
 async function main() {
     try {
         await updateArtifacts();
-        await buildResources(isDev);
         await buildUI(isDev);
+        await buildResources(isDev);
         await configure();
         await handleServerProcess(isDev);
     } catch (error) {
