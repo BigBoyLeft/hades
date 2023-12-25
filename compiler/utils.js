@@ -2,7 +2,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { glob } from 'glob';
 
-const RESOURCES_FOLDER = path.join(process.cwd(), 'src');
+const RESOURCES_FOLDER = sanitizePath(path.join(process.cwd(), 'src'));
+const COMPILED_FOLDER = sanitizePath(path.join(process.cwd(), 'resources', '[compiled]'));
 
 /**
  * @param {string} path
@@ -117,4 +118,14 @@ function getEnvironmentConfig() {
     }
 }
 
-export { RESOURCES_FOLDER, globSync, globAsync, copySync, copyAsync, writeFile, sanitizePath, getEnvironmentConfig };
+export {
+    RESOURCES_FOLDER,
+    COMPILED_FOLDER,
+    globSync,
+    globAsync,
+    copySync,
+    copyAsync,
+    writeFile,
+    sanitizePath,
+    getEnvironmentConfig,
+};

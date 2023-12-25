@@ -2,11 +2,11 @@ import fs from 'node:fs';
 import path from 'node:path';
 import axios from 'axios';
 import StreamZip from 'node-stream-zip';
-import { getEnvironmentConfig } from './utils.js';
+import { getEnvironmentConfig, sanitizePath } from './utils.js';
 import ora from 'ora';
 
 const artifactsUrl = 'https://changelogs-live.fivem.net/api/changelog/versions/win32/server';
-export const artifactsPath = path.join(process.cwd(), 'artifacts');
+export const artifactsPath = sanitizePath(path.join(process.cwd(), 'artifacts'));
 
 async function updateArtifacts() {
     const spinner = ora('Updating artifacts').start();
@@ -41,11 +41,12 @@ async function updateArtifacts() {
         spinner.text = 'Downloading artifacts...';
         const zipFileName = await downloadFile(downloadUrl, artifactsPath, buildVersion);
         spinner.text = 'Extracting artifacts...';
-        await extractZippedFiles(path.join(artifactsPath, zipFileName), artifactsPath);
+        await extractZippedFiles(sanitizePath(path.join(artifactsPath, zipFileName)), artifactsPath);
 
         spinner.succeed(`Done updating Artifacts for build ${buildVersion}.`);
     } catch (error) {
-        spinner.fail(`Failed to update artifacts: ${error.message}`);
+        spinner.fail(`Failed to update artifacts`);
+        throw error;
     }
 }
 

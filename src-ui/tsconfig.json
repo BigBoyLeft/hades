@@ -1,17 +1,18 @@
 {
     "extends": "../tsconfig.json",
     "compilerOptions": {
-        "target": "ES5",
+        "target": "ESNext",
         "module": "ESNext",
         "jsx": "preserve",
         "esModuleInterop": true,
-        "lib": ["ESNext", "DOM"]
+        "lib": ["ESNext", "DOM", "DOM.Iterable"]
     },
     "include": [
         "src/**/*.ts",
         "src/**/*.d.ts",
         "src/**/*.tsx",
         "src/**/*.vue",
+        "../src/**/shared/**/*.ts",
         "../src/**/modules/**/ui/**/*.ts",
         "../src/**/modules/**/ui/**/*.vue"
     ],

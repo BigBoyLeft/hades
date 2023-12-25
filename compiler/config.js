@@ -1,9 +1,9 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { getEnvironmentConfig, writeFile } from './utils.js';
+import { getEnvironmentConfig, sanitizePath, writeFile } from './utils.js';
 import ora from 'ora';
 
-const ENVIRONMENT_CONFIG = path.join(process.cwd(), `environment.config.cfg`);
+const ENVIRONMENT_CONFIG = sanitizePath(path.join(process.cwd(), `environment.config.cfg`));
 const ENVIRONMENT = process.env.ENVIRONMENT;
 
 const spinner = ora();

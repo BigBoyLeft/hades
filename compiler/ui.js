@@ -1,13 +1,13 @@
 import path from 'node:path';
-import { exec, execSync, spawn } from 'node:child_process';
-import { sanitizePath, globSync, writeFile, copySync, RESOURCES_FOLDER, copyAsync } from './utils.js';
+import { spawn } from 'node:child_process';
+import { sanitizePath, globSync, writeFile, RESOURCES_FOLDER, copyAsync } from './utils.js';
 import { getResources } from './resources.js';
 import { getModules } from './modules.js';
 import ora from 'ora';
 
 const spinner = ora();
 
-const UI_IMPORTS_FOLDER = path.join(process.cwd(), 'src-ui', 'src', 'imports');
+const UI_IMPORTS_FOLDER = sanitizePath(path.join(process.cwd(), 'src-ui', 'src', 'imports'));
 
 function getUIFiles(search_path) {
     const files = {};
@@ -17,7 +17,7 @@ function getUIFiles(search_path) {
         const modules = getModules(resource);
 
         for (const module of modules) {
-            const uiFiles = globSync(sanitizePath(path.join(module, search_path)));
+            const uiFiles = globSync(path.join(module, search_path));
 
             for (const file of uiFiles) {
                 const name = path.basename(file, '.vue');
@@ -125,8 +125,8 @@ async function createDevServer() {
 
 async function buildDevServerConnector() {
     spinner.text = 'Building dev server connector';
-    const src = path.join(process.cwd(), 'src-ui', 'dev', 'index.html');
-    const dest = path.join(RESOURCES_FOLDER, 'framework', 'ui', 'index.html');
+    const src = sanitizePath(path.join(process.cwd(), 'src-ui', 'dev', 'index.html'));
+    const dest = sanitizePath(path.join(RESOURCES_FOLDER, 'framework', 'ui', 'index.html'));
     await copyAsync(src, dest);
 }
 

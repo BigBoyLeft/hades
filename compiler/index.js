@@ -14,7 +14,6 @@ async function main() {
         await configure();
         await handleServerProcess(isDev);
     } catch (error) {
-        console.error('Failed to compile server', error);
         process.exit(1);
     }
 }

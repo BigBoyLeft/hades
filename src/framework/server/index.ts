@@ -1,14 +1,31 @@
-import prisma from 'framework/server/systems/database';
-import { logger } from 'utils/shared';
-import { getEnvironmentConfig } from 'utils/server';
+import { prisma, getEnvironmentConfig } from '@Utils/server';
+import { Events, logger } from '@Utils/shared';
+
+const startTime = Date.now();
+const environment = getEnvironmentConfig();
 
 class Server {
     static async start() {
-        const environment = getEnvironmentConfig();
-        logger.info(`Starting Project ${environment.server.name} with build ${environment.server.game_build}`);
+        await Server.database();
+        await Server.boot();
     }
-    static async database() {}
-    static async;
+    static async database() {
+        try {
+            await prisma.$connect();
+        } catch (error) {
+            logger.error(error);
+        }
+    }
+    static async boot() {
+        await import('./boot');
+        logger.info(
+            `Started Project ${environment.server.name} (${environment.server.game_build}) in ${
+                Date.now() - startTime
+            }ms`,
+        );
+    }
 }
+
+Events;
 
 Server.start();
