@@ -1,6 +1,5 @@
 import path from 'node:path';
-import fs from 'node:fs';
-import { RESOURCES_FOLDER, sanitizePath, writeFile, globSync } from './utils.js';
+import { writeFile, globSync } from './utils.js';
 import { isPathDisabled } from './resources.js';
 
 async function writeClientImports(resource, modules) {
@@ -10,7 +9,7 @@ async function writeClientImports(resource, modules) {
 
     content += modules.map((module) => `import '${module}/client/index'`).join('\n');
 
-    const importPath = sanitizePath(path.join(resource, 'client', 'imports.ts'));
+    const importPath = path.join(resource, 'client', 'imports.ts');
     writeFile(importPath, content);
 }
 
@@ -18,18 +17,18 @@ async function writeServerImports(resource, modules) {
     if (!modules.length) return '';
 
     let content = `// THIS FILE IS AUTO GENERATED. DO NOT EDIT\n\n`;
-    content += "import { init } from 'framework/server/systems/modules'\n\n";
+    content += "import { init } from '@Framework/server/systems/modules'\n\n";
 
     content += modules.map((module) => `import '${module}/server/index'`).join('\n');
 
     content += `\ninit();\n`;
 
-    const importPath = sanitizePath(path.join(resource, 'server', 'imports.ts'));
+    const importPath = path.join(resource, 'server', 'imports.ts');
     writeFile(importPath, content);
 }
 
 function getModules(resource) {
-    return globSync(sanitizePath(path.join(resource, 'modules', '*'))).filter((module) => {
+    return globSync(path.join(resource, 'modules', '*')).filter((module) => {
         return !isPathDisabled(module);
     });
 }

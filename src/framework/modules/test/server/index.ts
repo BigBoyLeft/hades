@@ -1,5 +1,5 @@
-import * as ModuleSystem from 'framework/server/systems/modules';
-import { logger } from 'utils/shared';
+import * as ModuleSystem from '@Framework/server/systems/modules';
+import { logger } from '@Utils/shared';
 
 ModuleSystem.registerModule('test', async () => {
     logger.debug('This is a debug message');

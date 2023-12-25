@@ -3,9 +3,10 @@
         "baseUrl": ".",
         "paths": {
             "@/*": ["./*"],
-            "utils/*": ["./src/utils/*"],
-            "framework/*": ["./src/framework/*"],
-            "modules/*": ["./src/framework/modules/*"]
+            "@Utils/*": ["./src/utils/*"],
+            "@UI/*": ["./src-ui/src/*"],
+            "@Framework/*": ["./src/framework/*"],
+            "@Modules/*": ["./src/framework/modules/*"]
         },
         "types": ["@types/node", "@citizenfx/client", "@citizenfx/server"],
         "removeComments": true,
@@ -39,5 +40,5 @@
         "src/**/ui/**/*.ts",
         "src/**/ui/**/*.vue"
     ],
-    "exclude": ["scripts", "hades-cache", "cache"]
+    "exclude": ["scripts", "cache"]
 }

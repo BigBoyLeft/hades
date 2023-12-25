@@ -1,4 +1,4 @@
-import { logger } from 'utils/shared';
+import { logger } from '@Utils/shared';
 
 const modulesRegistration: Array<{ name: string; callback: Function }> = [];
 

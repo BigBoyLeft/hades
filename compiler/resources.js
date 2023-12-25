@@ -3,17 +3,16 @@ import fs from 'node:fs';
 import esbuild from 'esbuild';
 import plugin from 'esbuild-plugin-fileloc';
 import ora from 'ora';
+import { RESOURCES_FOLDER, COMPILED_FOLDER, sanitizePath, globSync, copySync } from './utils.js';
+import { buildModules } from './modules.js';
 
 const spinner = ora();
-
-import { RESOURCES_FOLDER, sanitizePath, globAsync, globSync, copySync } from './utils.js';
-import { buildModules } from './modules.js';
 
 const RESOURCE_DISABLERS = ['disabled', 'exclude'];
 
 async function compileServer(resource, dev) {
     const indexPath = sanitizePath(path.join(resource, 'server/index.ts'));
-    const targetPath = sanitizePath(path.join(resource.replace('src', 'resources/[compiled]'), 'server/index.js'));
+    const targetPath = sanitizePath(path.join(resource.replace(RESOURCES_FOLDER, COMPILED_FOLDER), 'server/index.js'));
 
     const esbuildOptions = {
         platform: 'node',
@@ -38,7 +37,7 @@ async function compileServer(resource, dev) {
 
 async function compileClient(resource, dev) {
     const indexPath = sanitizePath(path.join(resource, 'client/index.ts'));
-    const targetPath = sanitizePath(path.join(resource.replace('src', 'resources/[compiled]'), 'client/index.js'));
+    const targetPath = sanitizePath(path.join(resource.replace(RESOURCES_FOLDER, COMPILED_FOLDER), 'client/index.js'));
 
     const esbuildOptions = {
         platform: 'browser',
@@ -74,13 +73,13 @@ function isPathDisabled(folderPath) {
 }
 
 async function copyResourceFiles(resource) {
-    const files = globSync(sanitizePath(path.join(resource, '**/*.!(ts|vue)')), {
+    const files = globSync(path.join(resource, '**/*.!(ts|vue)'), {
         nodir: true,
         ignore: ['**/node_modules/**', '**/framework/modules/**', '**/tsconfig.json'],
     });
 
     for (const file of files) {
-        const target = file.replace('src', 'resources/[compiled]');
+        const target = file.replace(RESOURCES_FOLDER, COMPILED_FOLDER);
         if (file === target) continue;
 
         copySync(file, target);
@@ -113,8 +112,8 @@ async function buildResources(dev) {
     spinner.start('Compiling resources');
     const promises = [];
 
-    if (fs.existsSync(path.join(RESOURCES_FOLDER, '[compiled]'))) {
-        fs.rmSync(path.join(RESOURCES_FOLDER, '[compiled]'), { recursive: true });
+    if (fs.existsSync(COMPILED_FOLDER)) {
+        fs.rmSync(COMPILED_FOLDER, { recursive: true });
     }
 
     const resources = getResources();
