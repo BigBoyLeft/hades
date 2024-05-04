@@ -1,17 +1,20 @@
-import { ChildProcess, spawn } from 'child_process';
+import { ChildProcess, spawn } from 'node:child_process';
+import path from 'node:path';
 import ora from 'ora';
 
 const spinner = ora();
 
 /**
  * @type {ChildProcess} */
-let serverProcess;
+export let serverProcess;
+
 async function handleServerProcess(dev) {
     try {
         spinner.start('Starting server process...');
         if (serverProcess && !serverProcess.killed) serverProcess.kill();
 
-        serverProcess = spawn('start.bat', { stdio: 'inherit' });
+        // Execute FXServer.exe with arguments
+        serverProcess = spawn(path.join(process.cwd(), 'artifacts/FXServer.exe'), { stdio: 'inherit' });
 
         serverProcess.once('close', async (code) => {
             if (code === 0) {

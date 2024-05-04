@@ -7,21 +7,14 @@
         "locale": "en",
         "tags": ["Roleplay", "Unique", "Dynamic"],
         "max_clients": 2,
-        "game_build": "2944",
-        "license": "cfxk_1drXrWfrRM6YOFq2F3wiy_3xgXP8",
-        "steam_key": "C990FE2678F501743152207ADACD8628"
-    },
-    "database": {
-        "host": "localhost",
-        "user": "root",
-        "password": "v2YicoBFcGQFEKzRwnUk",
-        "database": "hades"
+        "game_build": "2944"
     },
     "security": {},
     "additional_options": [
+        "set onesync true",
+        "set onesync_population true",
         "set onesync_workaround763185 true",
         "set onesync_forceMigration true",
-        "set onesync_distanceCullVehicles true",
-        "set onesync true"
+        "set onesync_distanceCullVehicles true"
     ]
 }

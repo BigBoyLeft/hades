@@ -22,6 +22,7 @@ async function configure() {
         server_cfg += `endpoint_add_tcp "0.0.0.0:30120"\n`;
         server_cfg += `endpoint_add_udp "0.0.0.0:30120"\n`;
         server_cfg += `ensure [fivem]\n`;
+        server_cfg += `ensure [assets]\n`;
         server_cfg += `ensure [compiled]\n`;
         for (const option of additional_options) {
             server_cfg += `${option}\n`;
@@ -34,14 +35,14 @@ async function configure() {
         server_cfg += `sets tags "${server.tags.join(', ')}"\n`;
         server_cfg += `sv_maxclients ${server.max_clients}\n`;
         server_cfg += `sv_enforceGameBuild ${server.game_build}\n`;
-        server_cfg += `set steam_webApiKey "${server.steam_key}"\n`;
-        server_cfg += `sv_licenseKey "${server.license}"\n`;
+        server_cfg += `set steam_webApiKey "${process.env.STEAM_WEBAPI_KEY}"\n`;
+        server_cfg += `sv_licenseKey "${process.env.CFX_LICENSE_KEY}"\n`;
 
         writeFile(ENVIRONMENT_CONFIG, server_cfg);
 
         spinner.succeed('Built environment config');
     } catch (error) {
-        spinner.fail('Failed to generate environment config!');
+        spinner.fail('Environment Config');
         throw error;
     }
 }

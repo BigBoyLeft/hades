@@ -76,6 +76,7 @@ async function extractZippedFiles(file, dest) {
     const zip = new StreamZip.async({ file: file });
     await zip.extract(null, dest);
     await zip.close();
+    await fs.unlinkSync(file);
 }
 
 export { updateArtifacts };

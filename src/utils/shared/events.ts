@@ -1,20 +1,10 @@
 export class Events {
-    static readonly events: { [key: string]: Array<Function> } = {};
-
     static on(event: string, callback: Function, net?: boolean) {
         const eventFn = net ? onNet : on;
 
-        if (!this.events[event]) {
-            this.events[event] = [];
-
-            eventFn(event, (...args: any[]) => {
-                const callbacks = this.events[event];
-                if (!callbacks) return console.log('no callbacks');
-                callbacks.forEach((cb: Function) => cb(...args));
-            });
-        }
-
-        this.events[event].push(callback);
+        eventFn(event, (...args: any[]) => {
+            callback(...args);
+        });
     }
 
     static once(event: string, callback: Function, net?: boolean) {
@@ -26,16 +16,8 @@ export class Events {
         this.on(event, wrappedCallback, net);
     }
 
-    static off(event: string, callback: Function) {
-        if (this.events[event]) {
-            const index = this.events[event].indexOf(callback);
-            if (index !== -1) {
-                this.events[event].splice(index, 1);
-                if (this.events[event].length === 0) {
-                    delete this.events[event];
-                }
-            }
-        }
+    static off(eventName: string, callback: Function) {
+        removeEventListener(eventName, callback);
     }
 
     static emit(event: string, net?: boolean, ...args: any[]) {

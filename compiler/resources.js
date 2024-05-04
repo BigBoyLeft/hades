@@ -21,8 +21,7 @@ async function compileServer(resource, dev) {
         target: ['esnext'],
         format: 'cjs',
         bundle: true,
-        minify: true,
-        sourcemap: false,
+        sourcemap: true,
         logLevel: 'warning',
         plugins: [plugin.filelocPlugin()],
     };
@@ -46,7 +45,6 @@ async function compileClient(resource, dev) {
         target: ['esnext'],
         format: 'iife',
         bundle: true,
-        minify: true,
         sourcemap: false,
         logLevel: 'warning',
     };
@@ -73,9 +71,9 @@ function isPathDisabled(folderPath) {
 }
 
 async function copyResourceFiles(resource) {
-    const files = globSync(path.join(resource, '**/*.!(ts|vue)'), {
+    const files = globSync(path.join(resource, '**/*'), {
         nodir: true,
-        ignore: ['**/node_modules/**', '**/framework/modules/**', '**/tsconfig.json'],
+        ignore: ['**/node_modules/**', '**/framework/modules/**', '**/tsconfig.json', '**/*.ts', '**/*.vue'],
     });
 
     for (const file of files) {

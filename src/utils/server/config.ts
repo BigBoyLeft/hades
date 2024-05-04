@@ -12,9 +12,7 @@ type Config = {
         locale: string,
         tags: Array<string>,
         max_clients: number,
-        game_build: string,
-        license: string,
-        steam_key: string,
+        game_build: string
     },
     security: {},
     additional_options: Array<string>,

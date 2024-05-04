@@ -1,6 +1,8 @@
-console.log('This is a log from the client test module');
 
-// write a fivem typescript spawn car command
+
+setImmediate(() => {
+    SetEntityInvincible(PlayerPedId(), true);
+})
 
 RegisterCommand(
     'spawn',

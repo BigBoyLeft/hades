@@ -1,5 +1,5 @@
 import path from 'node:path';
-import { spawn } from 'node:child_process';
+import { ChildProcess, spawn } from 'node:child_process';
 import { sanitizePath, globSync, writeFile, RESOURCES_FOLDER, copyAsync } from './utils.js';
 import { getResources } from './resources.js';
 import { getModules } from './modules.js';
@@ -8,6 +8,10 @@ import ora from 'ora';
 const spinner = ora();
 
 const UI_IMPORTS_FOLDER = sanitizePath(path.join(process.cwd(), 'src-ui', 'src', 'imports'));
+
+/**
+ * @type {ChildProcess} */
+export let viteProcess;
 
 function getUIFiles(search_path) {
     const files = {};
@@ -101,11 +105,11 @@ async function createDevServer() {
 
         spinner.text = 'Starting vite server';
 
-        const vite = spawn('npx.cmd', ['vite', './src-ui', '--clearScreen=false', '--host=localhost', '--port=3000'], {
+        viteProcess = spawn('npx.cmd', ['vite', './src-ui', '--clearScreen=false', '--host=localhost', '--port=3000'], {
             stdio: 'pipe',
         });
 
-        vite.stdout.on('data', (data) => {
+        viteProcess.stdout.on('data', (data) => {
             if (data.toString().includes('ready')) {
                 spinner.succeed('Started vite server');
                 console.log(data.toString());
@@ -113,11 +117,11 @@ async function createDevServer() {
             } else console.log(data.toString());
         });
 
-        vite.once('close', (code) => {
+        viteProcess.once('close', (code) => {
             console.log(`vite exited with code ${code}`);
         });
 
-        vite.on('error', (error) => {
+        viteProcess.on('error', (error) => {
             reject(error);
         });
     });

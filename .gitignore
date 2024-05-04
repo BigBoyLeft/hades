@@ -2,7 +2,13 @@ artifacts
 node_modules
 cache
 resources/\[compiled]/
+resources/\[assets]/
 environment.config.cfg
 .replxx_history
 pnpm-lock.yaml
 .env
+txData/*
+!txData/default
+txData/default/*
+!txData/default/config.json
+src/**/ui
